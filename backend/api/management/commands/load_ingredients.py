@@ -42,3 +42,4 @@ class Command(BaseCommand):
                 )
         self.stdout.write(self.style.SUCCESS(
             'Успешно выгружены данные с csv и json файла'
+        ))

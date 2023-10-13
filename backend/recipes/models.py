@@ -4,7 +4,6 @@ from django.db import models
 
 from .constant import LENTH_COLOR, MAX_LENGTH
 
-
 User = get_user_model()
 
 
