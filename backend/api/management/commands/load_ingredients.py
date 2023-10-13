@@ -12,6 +12,12 @@ class Command(BaseCommand):
     help = 'Import json and csv files into database'
 
     def handle(self, *args, **options):
+        if Ingredients.objects.exists():
+            self.stdout.write(self.style.SUCCESS(
+                'Данные уже загружены, нет необходимости повторной загрузки.'
+            ))
+            return
+
         with open(
             f'{settings.BASE_DIR}/data/ingredients.csv',
             'r',
@@ -36,4 +42,3 @@ class Command(BaseCommand):
                 )
         self.stdout.write(self.style.SUCCESS(
             'Успешно выгружены данные с csv и json файла'
-          
