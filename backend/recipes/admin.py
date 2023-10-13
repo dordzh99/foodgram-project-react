@@ -14,8 +14,6 @@ class IngredientAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'measurement_unit',)
     list_filter = ('name',)
     search_fields = ('name',)
-    actions_on_top = True
-    actions_selection_counter = False
 
 
 @admin.register(Tag)
