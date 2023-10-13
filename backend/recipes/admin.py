@@ -14,11 +14,8 @@ class IngredientAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'measurement_unit',)
     list_filter = ('name',)
     search_fields = ('name',)
-    actions = ['delete_selected']
-
-    def delete_selected(self, request, queryset):
-        queryset.delete()
-    delete_selected.short_description = "Delete selected items"
+    actions_on_top = True
+    actions_selection_counter = False
 
 
 @admin.register(Tag)
