@@ -42,7 +42,7 @@ class IngredientInRecipe(admin.ModelAdmin):
 
 
 @admin.register(Favorite)
-class FavouriteAdmin(admin.ModelAdmin):
+class FavoriteAdmin(admin.ModelAdmin):
     list_display = ('user', 'recipe',)
 
 
