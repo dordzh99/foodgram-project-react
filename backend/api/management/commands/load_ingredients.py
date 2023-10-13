@@ -1,6 +1,5 @@
 import csv
 import json
-import os
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -12,7 +11,7 @@ class Command(BaseCommand):
     help = 'Import json and csv files into database'
 
     def handle(self, *args, **options):
-        if Ingredients.objects.exists():
+        if Ingredient.objects.exists():
             self.stdout.write(self.style.SUCCESS(
                 'Данные уже загружены, нет необходимости повторной загрузки.'
             ))

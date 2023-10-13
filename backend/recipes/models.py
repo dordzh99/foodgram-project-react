@@ -80,7 +80,7 @@ class Recipe(models.Model):
         through='TagInRecipe',
         verbose_name='Теги',
         related_name='recipes'
-        )
+    )
 
     class Meta:
         verbose_name = 'Рецепт'
