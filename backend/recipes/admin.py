@@ -13,9 +13,6 @@ class IngredientsInLine(admin.TabularInline):
 class IngredientAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'measurement_unit',)
     list_filter = ('name',)
-    actions_on_top = False
-    actions_on_bottom = False
-    list_display_links = ('name',)
     search_fields = ('name',)
 
 
