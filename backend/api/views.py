@@ -1,0 +1,129 @@
+from django.db.models import Sum
+from django.http import HttpResponse
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import status
+from rest_framework.decorators import action
+from rest_framework.generics import get_object_or_404
+from rest_framework.permissions import (
+    AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
+)
+from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+
+from recipes.models import (
+    Favorite, Ingredient, IngredientInRecipe, Recipe, ShoppingCart, Tag
+)
+from .filters import IngredientSearchFilter, RecipeFilter
+from .pagination import CustomPagination
+from .permissions import IsAuthorOrAdminOrReadOnly
+from .serializers import (
+    IngredientSerializer, RecipeSerializer, RecipeListSerializer,
+    SubscribeRecipeSerializer, TagSerializer
+)
+
+
+class IngredientViewSet(ReadOnlyModelViewSet):
+    queryset = Ingredient.objects.all()
+    permission_classes = (AllowAny, )
+    serializer_class = IngredientSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = IngredientSearchFilter
+
+
+class TagViewSet(ReadOnlyModelViewSet):
+    queryset = Tag.objects.all()
+    permission_classes = (AllowAny, )
+    serializer_class = TagSerializer
+
+
+class RecipeViewSet(ModelViewSet):
+    permission_classes = [IsAuthenticatedOrReadOnly,
+                          IsAuthorOrAdminOrReadOnly]
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = RecipeFilter
+    pagination_class = CustomPagination
+
+    def get_queryset(self):
+        queryset = Recipe.objects.all().select_related(
+            'author').prefetch_related(
+            'ingredients', 'tags'
+        ).order_by('-id')
+        return queryset
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+    def get_serializer_class(self):
+        if self.action in ('list', 'retrieve'):
+            return RecipeListSerializer
+        return RecipeSerializer
+
+    def add_to(self, model, user, pk):
+        if model.objects.filter(user=user, recipe__id=pk).exists():
+            return Response(
+                {'errors': 'Этот рецепт уже добавлен!'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        recipe = get_object_or_404(Recipe, id=pk)
+        model.objects.create(user=user, recipe=recipe)
+        serializer = SubscribeRecipeSerializer(recipe)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def delete_from(self, model, user, pk):
+        obj = model.objects.filter(user=user, recipe__id=pk)
+        if obj.exists():
+            obj.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            {'errors': 'Этот рецепт уже удален!'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    @action(
+        methods=["POST", "DELETE"],
+        detail=True,
+        permission_classes=[IsAuthenticated]
+    )
+    def favorite(self, request, pk):
+        if self.request.method == "POST":
+            return self.add_to(Favorite, request.user, pk)
+        return self.delete_from(Favorite, request.user, pk)
+
+    @action(
+        methods=["POST", "DELETE"],
+        detail=True,
+        permission_classes=[IsAuthenticated]
+    )
+    def shopping_cart(self, request, pk):
+        if self.request.method == "POST":
+            return self.add_to(ShoppingCart, request.user, pk)
+        return self.delete_from(ShoppingCart, request.user, pk)
+
+    @action(
+        methods=["GET"],
+        detail=False,
+        permission_classes = [IsAuthenticated]
+    )
+    def download_shopping_cart(self, request):
+        ingredient_list = "Cписок покупок:"
+
+        ingredients = IngredientInRecipe.objects.filter(
+            recipe__shopping_cart__user=request.user
+        ).values(
+            'ingredient__name',
+            'ingredient__measurement_unit'
+        ).annotate(amount=Sum('amount'))
+
+        for ingredient in ingredients:
+            ingredient_name = ingredient['ingredient__name']
+            measurement_unit = ingredient['ingredient__measurement_unit']
+            amount = ingredient['amount']
+            ingredient_list += (
+                f"\n{ingredient_name} - {amount} {measurement_unit}"
+            )
+
+        file = 'shopping_list'
+        response = HttpResponse(ingredient_list, content_type='text/plain')
+        response['Content-Disposition'] = f'attachment; filename="{file}.txt"'
+
+        return response
