@@ -9,6 +9,7 @@ User = get_user_model()
 
 class Ingredient(models.Model):
     """Модель ингредиентов."""
+
     name = models.CharField(
         max_length=MAX_LENGTH,
         verbose_name='Название'
@@ -29,6 +30,7 @@ class Ingredient(models.Model):
 
 class Tag(models.Model):
     """Модель тэгов."""
+
     name = models.CharField(
         max_length=MAX_LENGTH,
         verbose_name='Название'
@@ -49,6 +51,7 @@ class Tag(models.Model):
 
 class Recipe(models.Model):
     """Модель рецептов."""
+
     name = models.CharField(
         max_length=MAX_LENGTH,
         verbose_name='Название рецепта'
@@ -92,6 +95,7 @@ class Recipe(models.Model):
 
 class IngredientInRecipe(models.Model):
     """Модель для связи ингредиента и рецепта."""
+
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     recipe = models.ForeignKey(
         Recipe, on_delete=models.CASCADE,
@@ -118,6 +122,7 @@ class IngredientInRecipe(models.Model):
 
 class TagInRecipe(models.Model):
     """Модель для связи тега и рецепта."""
+
     tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
 
@@ -134,6 +139,7 @@ class TagInRecipe(models.Model):
 
 class Favorite(models.Model):
     """Модель для отображения избранного."""
+
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
@@ -162,6 +168,7 @@ class Favorite(models.Model):
 
 class ShoppingCart(models.Model):
     """Модель для отображения списка покупок."""
+
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,

@@ -7,37 +7,21 @@ from .constant import LENGTH_EMAIL, LENGTH_USER
 
 class CustomUser(AbstractUser):
     """Кастомная модель пользователя."""
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
-    username = models.CharField(
-        verbose_name='Имя пользователя',
-        max_length=LENGTH_USER,
-        unique=True,
-        blank=False,
-        validators=[RegexValidator(r'^[\w.@+-]+\Z')],
-    )
     email = models.EmailField(
         verbose_name='Почта',
-        unique=True,
         max_length=LENGTH_EMAIL,
-        blank=False
     )
     first_name = models.CharField(
         verbose_name='Имя',
         max_length=LENGTH_USER,
-        blank=False
     )
     last_name = models.CharField(
         verbose_name='Фамилия',
         max_length=LENGTH_USER,
-        blank=False
-    )
-    password = models.CharField(
-        verbose_name='Пароль',
-        max_length=LENGTH_USER,
-        blank=False,
-        validators=[RegexValidator(r'^[\w.@+-]+\Z')],
     )
 
     class Meta:
@@ -51,6 +35,7 @@ class CustomUser(AbstractUser):
 
 class Subscribe(models.Model):
     """Модель подписки на автора."""
+
     user = models.ForeignKey(
         CustomUser,
         on_delete=models.CASCADE,

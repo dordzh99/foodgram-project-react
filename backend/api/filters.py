@@ -6,11 +6,11 @@ from recipes.models import Ingredient, Recipe, Tag, User
 
 
 class IngredientSearchFilter(FilterSet):
-    name = filters.CharFilter(lookup_expr='startswith')
+    name = filters.CharFilter(lookup_expr='iexact')
 
     class Meta:
         model = Ingredient
-        fields = ['name']
+        fields = ('name',)
 
 
 class RecipeFilter(FilterSet):
