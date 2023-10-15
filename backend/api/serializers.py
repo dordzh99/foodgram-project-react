@@ -157,8 +157,6 @@ class RecipeSerializer(serializers.ModelSerializer):
         unique_ingredient_id = set()
         for ingredient in ingredients:
             ingredient_id = ingredient['id']
-            amount = ingredient['amount']
-
             if ingredient_id in unique_ingredient_id:
                 raise serializers.ValidationError(
                     {'ingredients': 'Ингредиенты должны быть уникальными!'}
