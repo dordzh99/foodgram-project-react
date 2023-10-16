@@ -1,31 +1,19 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from drf_extra_fields.fields import Base64ImageField
-from recipes.models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
-                            ShoppingCart, Tag, TagInRecipe)
 from rest_framework import serializers, validators
 from rest_framework.exceptions import ValidationError
+
+from recipes.models import (Favorite, Ingredient, IngredientInRecipe,
+                            Recipe, ShoppingCart, Tag, TagInRecipe)
 from users.constant import LENGTH_EMAIL, LENGTH_USER
 from users.models import Subscribe
 
 User = get_user_model()
 
 
-class UserAuthSerializer(serializers.ModelSerializer):
+class UserRegSerializer(serializers.ModelSerializer):
     """Сериализатор для регистрации пользователя."""
-
-    username = serializers.CharField(
-        max_length=LENGTH_USER,
-        validators=[validators.UniqueValidator(
-            queryset=User.objects.all())
-        ]
-    )
-    email = serializers.EmailField(
-        max_length=LENGTH_EMAIL,
-        validators=[validators.UniqueValidator(
-            queryset=User.objects.all())
-        ]
-    )
 
     class Meta:
         model = User

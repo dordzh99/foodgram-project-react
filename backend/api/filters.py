@@ -1,11 +1,14 @@
-from django_filters.rest_framework import (BooleanFilter, FilterSet,
-                                           ModelChoiceFilter,
-                                           ModelMultipleChoiceFilter, filters)
+from django_filters.rest_framework import (
+    BooleanFilter, FilterSet, ModelChoiceFilter,
+    ModelMultipleChoiceFilter, filters
+)
+from rest_framework.exceptions import PermissionDenied
+
 from recipes.models import Ingredient, Recipe, Tag, User
 
 
 class IngredientSearchFilter(FilterSet):
-    name = filters.CharFilter(lookup_expr='iexact')
+    name = filters.CharFilter(lookup_expr='icontains')
 
     class Meta:
         model = Ingredient
@@ -29,18 +32,24 @@ class RecipeFilter(FilterSet):
     class Meta:
         model = Recipe
         fields = (
-            'author', 'is_in_shopping_cart',
-            'tags', 'is_favorited'
+            'author',
+            'is_in_shopping_cart',
+            'tags',
+            'is_favorited'
         )
 
     def get_is_favorited(self, queryset, name, value):
         user = self.request.user
         if value and user.is_authenticated:
             return queryset.filter(favorites__user=user)
+        if value and not user.is_authenticated:
+            raise PermissionDenied('Необходимо авторизоваться!')
         return queryset
 
     def get_is_in_shopping_cart(self, queryset, name, value):
         user = self.request.user
         if value and user.is_authenticated:
             return queryset.filter(shopping_cart__user=user)
+        if value and not user.is_authenticated:
+            raise PermissionDenied('Необходимо авторизоваться!')
         return queryset
