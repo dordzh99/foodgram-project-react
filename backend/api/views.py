@@ -28,7 +28,7 @@ class IngredientViewSet(ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     permission_classes = (AllowAny, )
     serializer_class = IngredientSerializer
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = (DjangoFilterBackend, )
     filterset_class = IngredientSearchFilter
 
 
@@ -39,9 +39,9 @@ class TagViewSet(ReadOnlyModelViewSet):
 
 
 class RecipeViewSet(ModelViewSet):
-    permission_classes = [IsAuthenticatedOrReadOnly,
-                          IsAuthorOrAdminOrReadOnly]
-    filter_backends = [DjangoFilterBackend]
+    permission_classes = (IsAuthenticatedOrReadOnly,
+                          IsAuthorOrAdminOrReadOnly)
+    filter_backends = (DjangoFilterBackend, )
     filterset_class = RecipeFilter
     pagination_class = CustomPagination
 
@@ -82,32 +82,32 @@ class RecipeViewSet(ModelViewSet):
         )
 
     @action(
-        methods=["POST", "DELETE"],
+        methods=['POST', 'DELETE'],
         detail=True,
-        permission_classes=[IsAuthenticated]
+        permission_classes=(IsAuthenticated, )
     )
     def favorite(self, request, pk):
-        if self.request.method == "POST":
+        if self.request.method == 'POST':
             return self.add_to(Favorite, request.user, pk)
         return self.delete_from(Favorite, request.user, pk)
 
     @action(
-        methods=["POST", "DELETE"],
+        methods=['POST', 'DELETE'],
         detail=True,
-        permission_classes=[IsAuthenticated]
+        permission_classes=(IsAuthenticated, )
     )
     def shopping_cart(self, request, pk):
-        if self.request.method == "POST":
+        if self.request.method == 'POST':
             return self.add_to(ShoppingCart, request.user, pk)
         return self.delete_from(ShoppingCart, request.user, pk)
 
     @action(
-        methods=["GET"],
+        methods=['GET'],
         detail=False,
-        permission_classes=[IsAuthenticated]
+        permission_classes=(IsAuthenticated, )
     )
     def download_shopping_cart(self, request):
-        ingredient_list = "Cписок покупок:"
+        ingredient_list = 'Cписок покупок:'
 
         ingredients = IngredientInRecipe.objects.filter(
             recipe__shopping_cart__user=request.user
@@ -121,7 +121,7 @@ class RecipeViewSet(ModelViewSet):
             measurement_unit = ingredient['ingredient__measurement_unit']
             amount = ingredient['amount']
             ingredient_list += (
-                f"\n{ingredient_name} - {amount} {measurement_unit}"
+                f'\n{ingredient_name} - {amount} {measurement_unit}'
             )
 
         file = 'shopping_list'
@@ -138,15 +138,15 @@ class CustomUserViewSet(UserViewSet):
 
     @action(
         detail=True,
-        methods=["POST", "DELETE"],
-        permission_classes=[IsAuthenticated]
+        methods=['POST', 'DELETE'],
+        permission_classes=(IsAuthenticated, )
     )
     def subscribe(self, request, **kwargs):
         user = request.user
         author_id = self.kwargs.get('id')
         author = get_object_or_404(User, id=author_id)
 
-        if request.method == "POST":
+        if request.method == 'POST':
             serializer = SubscribeListSerializer(
                 author, data=request.data, context={'request': request}
             )
@@ -162,8 +162,8 @@ class CustomUserViewSet(UserViewSet):
 
     @action(
         detail=False,
-        permission_classes=[IsAuthenticated],
-        methods=["GET"]
+        permission_classes=(IsAuthenticated, )
+        methods=['GET']
     )
     def subscriptions(self, request):
         user = request.user
