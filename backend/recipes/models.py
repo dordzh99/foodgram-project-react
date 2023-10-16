@@ -111,12 +111,12 @@ class IngredientInRecipe(models.Model):
     class Meta:
         verbose_name = 'Ингредиент рецепта'
         verbose_name_plural = 'Ингредиенты рецепта'
-        constraints = (
+        constraints = [
             models.UniqueConstraint(
                 fields=('ingredient', 'recipe'),
                 name='unique_ingredient_in_recipe'
             )
-        )
+        ]
 
     def __str__(self):
         return f'{self.ingredient} - {self.amount}'
