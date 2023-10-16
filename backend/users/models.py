@@ -3,6 +3,7 @@ from django.db import models
 
 from .constant import LENGTH_EMAIL
 
+
 class CustomUser(AbstractUser):
     """Кастомная модель пользователя."""
 
