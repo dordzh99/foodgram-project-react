@@ -162,7 +162,7 @@ class CustomUserViewSet(UserViewSet):
 
     @action(
         detail=False,
-        permission_classes=(IsAuthenticated, )
+        permission_classes=(IsAuthenticated, ),
         methods=['GET']
     )
     def subscriptions(self, request):
