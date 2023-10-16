@@ -1,12 +1,18 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from .constant import LENGTH_EMAIL
 
 class CustomUser(AbstractUser):
     """Кастомная модель пользователя."""
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
+
+    email = models.EmailField(
+        unique=True,
+        max_length=LENGTH_EMAIL,
+    )
 
     class Meta:
         verbose_name = 'Пользователь'
