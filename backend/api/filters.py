@@ -1,7 +1,6 @@
-from django_filters.rest_framework import (
-    BooleanFilter, FilterSet, ModelChoiceFilter,
-    ModelMultipleChoiceFilter, filters
-)
+from django_filters.rest_framework import (BooleanFilter, FilterSet,
+                                           ModelChoiceFilter,
+                                           ModelMultipleChoiceFilter, filters)
 from rest_framework.exceptions import PermissionDenied
 
 from recipes.models import Ingredient, Recipe, Tag, User

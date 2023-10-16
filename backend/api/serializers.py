@@ -1,12 +1,11 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from drf_extra_fields.fields import Base64ImageField
-from rest_framework import serializers, validators
+from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from recipes.models import (Favorite, Ingredient, IngredientInRecipe,
-                            Recipe, ShoppingCart, Tag, TagInRecipe)
-from users.constant import LENGTH_EMAIL, LENGTH_USER
+from recipes.models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
+                            ShoppingCart, Tag, TagInRecipe)
 from users.models import Subscribe
 
 User = get_user_model()

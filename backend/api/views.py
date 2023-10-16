@@ -1,7 +1,7 @@
 from django.db.models import Sum
 from django.http import HttpResponse
-from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 from rest_framework import status
 from rest_framework.decorators import action
@@ -14,11 +14,12 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from recipes.models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
                             ShoppingCart, Tag, User)
 from users.models import Subscribe
+
 from .filters import IngredientSearchFilter, RecipeFilter
 from .pagination import CustomPagination
 from .permissions import IsAuthorOrAdminOrReadOnly
 from .serializers import (IngredientSerializer, ProfileSerializer,
-                          RecipeListSerializer, RecipeSerializer
+                          RecipeListSerializer, RecipeSerializer,
                           SubscribeListSerializer, SubscribeRecipeSerializer,
                           TagSerializer)
 
