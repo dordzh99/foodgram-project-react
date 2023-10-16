@@ -131,12 +131,12 @@ class TagInRecipe(models.Model):
     class Meta:
         verbose_name = 'Тег рецепта'
         verbose_name_plural = 'Теги рецепта'
-        constraints = (
+        constraints = [
             models.UniqueConstraint(
                 fields=('tag', 'recipe'),
                 name='unique_tag_in_recipe'
             )
-        )
+        ]
 
 
 class Favorite(models.Model):
@@ -157,12 +157,12 @@ class Favorite(models.Model):
     class Meta:
         verbose_name = 'Избранное'
         verbose_name_plural = 'Избранное'
-        constraints = (
+        constraints = [
             models.UniqueConstraint(
                 fields=('recipe', 'user'),
                 name='unique_favourite'
             )
-        )
+        ]
 
     def __str__(self):
         return f'{self.user} добавил {self.recipe} в избранное'
