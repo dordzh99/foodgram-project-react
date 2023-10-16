@@ -17,7 +17,7 @@ from users.models import Subscribe
 
 from .filters import IngredientSearchFilter, RecipeFilter
 from .pagination import CustomPagination
-from .permissions import IsAuthorOrAdminOrReadOnly
+from .permissions import IsAuthorOrAdmin
 from .serializers import (IngredientSerializer, ProfileSerializer,
                           RecipeListSerializer, RecipeSerializer,
                           SubscribeListSerializer, SubscribeRecipeSerializer,
@@ -40,7 +40,7 @@ class TagViewSet(ReadOnlyModelViewSet):
 
 class RecipeViewSet(ModelViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly,
-                          IsAuthorOrAdminOrReadOnly)
+                          IsAuthorOrAdmin,)
     filter_backends = (DjangoFilterBackend, )
     filterset_class = RecipeFilter
     pagination_class = CustomPagination
