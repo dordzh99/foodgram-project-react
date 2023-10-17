@@ -26,7 +26,7 @@ class UserRegSerializer(serializers.ModelSerializer):
         return user
 
 
-class ProfileSerializer(UserSerializer):
+class ProfileSerializer(serializers.ModelSerializer):
     """Сериализатор для отображения пользователя."""
 
     is_subscribed = serializers.SerializerMethodField()
