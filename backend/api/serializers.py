@@ -39,13 +39,14 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     def get_is_subscribed(self, obj):
         user = self.context.get('request').user
-        return (
-            user.is_authenticated
-            and Subscribe.objects.filter(
-                user=user,
-                author=obj
-            ).exists()
-        )
+        if user.is_authenticated:
+            return (
+                Subscribe.objects.filter(
+                    user=user,
+                    author=obj
+                ).exists()
+            )
+        return False
 
 
 class IngredientSerializer(serializers.ModelSerializer):
