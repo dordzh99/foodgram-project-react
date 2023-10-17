@@ -113,7 +113,7 @@ class RecipeListSerializer(serializers.ModelSerializer):
 class AddIngredientSerializer(serializers.ModelSerializer):
     """Сериализатор для добавления ингредиентов."""
 
-    id = serializers.IntegerField()
+    id = serializers.primaryKeyRelatedField(queryset=Ingredient.objects.all())
     amount = serializers.IntegerField(min_value=1)
 
     class Meta:
@@ -166,14 +166,12 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def create_ingredients(ingredients, recipe):
-        ingredients_list = [
-            IngredientInRecipe(
+        for ingredient in ingredients:
+            IngredientInRecipe.objects.create(
                 recipe=recipe,
-                ingredient=Ingredient.objects.get(id=ingredient['id']),
-                amount=ingredient['amount'],
-            ) for ingredient in ingredients
-        ]
-        IngredientInRecipe.objects.bulk_create(ingredients_list)
+                ingredient=ingredient['id'],
+                amount=ingredient['amount']
+        )
 
     @staticmethod
     def create_tags(tags, recipe):
@@ -196,10 +194,10 @@ class RecipeSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
+        instance.ingredients.clear()
+        self.create_tags(ingredients, instance)
         instance.tags.clear()
         self.create_tags(tags, instance)
-        IngredientInRecipe.objects.filter(recipe=instance).delete()
-        self.create_ingredients(ingredients, instance)
         return super().update(instance, validated_data)
 
     def to_representation(self, instance):
