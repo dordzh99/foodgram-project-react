@@ -113,7 +113,8 @@ class RecipeListSerializer(serializers.ModelSerializer):
 class AddIngredientSerializer(serializers.ModelSerializer):
     """Сериализатор для добавления ингредиентов."""
 
-    id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
+    id = serializers.PrimaryKeyRelatedField(source='ingredient',
+                                            queryset=Ingredient.objects.all())
     amount = serializers.IntegerField(min_value=1)
 
     class Meta:
@@ -169,8 +170,8 @@ class RecipeSerializer(serializers.ModelSerializer):
         ingredients_list = [
             IngredientInRecipe(
                 recipe=recipe,
-                ingredient=ingredient.get('id'),
-                amount=ingredient.get('amount'),
+                ingredient=ingredient['ingredient'],
+                amount=ingredient['amount'],
             ) for ingredient in ingredients
         ]
         IngredientInRecipe.objects.bulk_create(ingredients_list)
@@ -196,12 +197,11 @@ class RecipeSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
+        instance.ingredients.clear()
+        self.create_ingredients(ingredients, instance)
         instance.tags.clear()
         self.create_tags(tags, instance)
-        IngredientInRecipe.objects.filter(recipe=instance).delete()
-        super().update(instance, validated_data)
-        self.create_ingredients(ingredients, instance)
-        return instance
+        return super().update(instance, validated_data)
 
     def to_representation(self, instance):
         return RecipeListSerializer(
