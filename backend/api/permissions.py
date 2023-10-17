@@ -9,10 +9,20 @@ class IsAuthorOrAdmin(BasePermission):
                 or request.user.is_superuser)
 
 
-# class IsRequestedUserOrAdmin(BasePermission):
+class IsCurrentUserOrAdmin(BasePermission):
 
-#     def has_permission(self, request, view):
-#         return request.user.is_authenticated
+    def has_object_permission(self, request, view, obj):
+        return (request.method in SAFE_METHODS
+                or obj.pk == request.user.pk
+                or request.user.is_superuser)
 
-#     def has_object_permission(self, request, view, obj):
-#         return obj == request.user
+
+class IsCurrentUserOrAdminOrReadOnly(BasePermission):
+
+    def has_permission(self, request, view):
+        return request.method in SAFE_METHODS
+
+    def has_object_permission(self, request, view, obj):
+        return (request.method in SAFE_METHODS
+                or obj.pk == request.user.pk
+                or request.user.is_superuser)

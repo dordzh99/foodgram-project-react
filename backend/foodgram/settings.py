@@ -146,8 +146,8 @@ DJOSER = {
     },
     'PERMISSIONS': {
         'user_list': ['djoser.permissions.AllowAny'],
-        'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
-        'current_user': ['djoser.permissions.CurrentUserOrAdmin'],
+        'user': ['api.permissions.CurrentUserOrAdminOrReadOnly'],
+        'current_user': ['api.permissions.CurrentUserOrAdmin'],
         'set_password': ['djoser.permissions.CurrentUserOrAdmin']
     }
 }
