@@ -196,10 +196,11 @@ class RecipeSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
-        instance.ingredients.clear()
-        self.create_ingredients(ingredients, instance)
         instance.tags.clear()
         self.create_tags(tags, instance)
+        IngredientInRecipe.objects.filter(recipe=instance).delete()
+        super().update(instance, validated_data)
+        self.create_ingredients(ingredients, instance)
         return super().update(instance, validated_data)
 
     def to_representation(self, instance):
