@@ -166,12 +166,14 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def create_ingredients(ingredients, recipe):
-        for ingredient in ingredients:
-            IngredientInRecipe.objects.create(
+        ingredients_list = [
+            IngredientInRecipe(
                 recipe=recipe,
                 ingredient=ingredient['id'],
                 amount=ingredient['amount']
-            )
+            ) for ingredient in ingredients
+        ]
+    IngredientInRecipe.objects.bulk_create(ingredients_list)
 
     @staticmethod
     def create_tags(tags, recipe):
@@ -195,7 +197,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
         instance.ingredients.clear()
-        self.create_tags(ingredients, instance)
+        self.create_ingredients(ingredients, instance)
         instance.tags.clear()
         self.create_tags(tags, instance)
         return super().update(instance, validated_data)
