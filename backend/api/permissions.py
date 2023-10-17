@@ -12,5 +12,15 @@ class IsAuthorOrAdmin(BasePermission):
 class IsCurrentUserOrAdmin(BasePermission):
 
     def has_object_permission(self, request, view, obj):
-        return (obj.pk == request.user.pk
+        if request.user.is_authenticated:
+            return (obj == request.user
+                    or request.user.is_superuser)
+        return False
+
+
+class IsUserOrAdmin(BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        return (request.method in SAFE_METHODS
+                or obj == request.user
                 or request.user.is_superuser)
