@@ -146,8 +146,8 @@ DJOSER = {
     },
     'PERMISSIONS': {
         'user_list': ['rest_framework.permissions.AllowAny'],
-        'user': ['djoser.permissions.CurrentUserOrAdmin'],
-        'current_user': ['api.permissions.IsRequestedUserOrAdmin'],
+        'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
+        'current_user': ['api.permissions.CurrentUserOrAdminOrReadOnly'],
         'set_password': ['djoser.permissions.CurrentUserOrAdmin']
     }
 }
