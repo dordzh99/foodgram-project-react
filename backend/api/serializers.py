@@ -171,7 +171,7 @@ class RecipeSerializer(serializers.ModelSerializer):
                 recipe=recipe,
                 ingredient=ingredient['id'],
                 amount=ingredient['amount']
-        )
+            )
 
     @staticmethod
     def create_tags(tags, recipe):
