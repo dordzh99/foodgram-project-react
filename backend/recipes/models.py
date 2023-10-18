@@ -1,8 +1,10 @@
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
 
 from .constant import LENTH_COLOR, MAX_LENGTH
+from .validators import validate_unique_color
 
 User = get_user_model()
 
@@ -23,13 +25,14 @@ class Ingredient(models.Model):
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
         ordering = ('name',)
+        unique_together = ('name', 'measurement_unit')
 
     def __str__(self):
         return f'{self.name} {self.measurement_unit}'
 
 
 class Tag(models.Model):
-    """Модель тэгов."""
+    """Модель тегов."""
 
     name = models.CharField(
         max_length=MAX_LENGTH,
@@ -40,7 +43,10 @@ class Tag(models.Model):
         unique=True,
         max_length=LENTH_COLOR,
         verbose_name='Цветовой код',
-        validators=[RegexValidator(regex='^#([A-Fa-f0-9]{6})$')]
+        validators=(
+            RegexValidator(regex='^#([A-Fa-f0-9]{6})$'),
+            validate_unique_color
+        )
     )
 
     class Meta:
@@ -90,6 +96,12 @@ class Recipe(models.Model):
     class Meta:
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
+
+    def clean(self):
+        if not self.ingredients.exists() or not self.tags.exists():
+            raise ValidationError(
+                'Рецепт должен иметь минимум один ингредиент или один тег.'
+            )
 
     def __str__(self):
         return self.name

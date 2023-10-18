@@ -86,6 +86,11 @@ class RecipeViewSet(ModelViewSet):
         permission_classes=(IsAuthenticated, )
     )
     def favorite(self, request, pk):
+        try:
+            pk = int(pk)
+        except ValueError:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
         if self.request.method == 'POST':
             return self.add_to(Favorite, request.user, pk)
         return self.delete_from(Favorite, request.user, pk)
@@ -96,6 +101,11 @@ class RecipeViewSet(ModelViewSet):
         permission_classes=(IsAuthenticated, )
     )
     def shopping_cart(self, request, pk):
+        try:
+            pk = int(pk)
+        except ValueError:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
         if self.request.method == 'POST':
             return self.add_to(ShoppingCart, request.user, pk)
         return self.delete_from(ShoppingCart, request.user, pk)
@@ -152,6 +162,11 @@ class CustomUserViewSet(UserViewSet):
     def subscribe(self, request, **kwargs):
         user = request.user
         author_id = self.kwargs.get('id')
+        try:
+            author_id = int(author_id)
+        except ValueError:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
         author = get_object_or_404(User, id=author_id)
 
         if request.method == 'POST':
