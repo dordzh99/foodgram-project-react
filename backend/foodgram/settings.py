@@ -141,11 +141,10 @@ DJOSER = {
     'SERIALIZERS': {
         'user_create': 'api.serializers.UserRegSerializer',
         'user': 'api.serializers.ProfileSerializer',
-        'set_password': 'djoser.serializers.SetPasswordSerializer',
+        'current_user': 'api.serializers.ProfileSerializer',
     },
     'PERMISSIONS': {
         'user_list': ['rest_framework.permissions.AllowAny'],
         'user': ['api.permissions.IsUserOrAdmin'],
-        'set_password': ['djoser.permissions.CurrentUserOrAdmin']
     }
 }
