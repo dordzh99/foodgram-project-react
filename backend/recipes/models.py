@@ -4,7 +4,6 @@ from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
 
 from .constant import LENTH_COLOR, MAX_LENGTH
-from .validators import validate_unique_color
 
 User = get_user_model()
 
@@ -43,15 +42,20 @@ class Tag(models.Model):
         unique=True,
         max_length=LENTH_COLOR,
         verbose_name='Цветовой код',
-        validators=(
-            RegexValidator(regex='^#([A-Fa-f0-9]{6})$'),
-            validate_unique_color
-        )
+        validators=(RegexValidator(regex='^#([A-Fa-f0-9]{6})$'),)
     )
 
     class Meta:
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
+
+    def clean(self):
+        if Tag.objects.filter(
+            color__iexact=self.color
+        ).exclude(pk=self.pk).exists():
+            raise ValidationError(
+                'Тег с таким цветом уже существует.'
+            )
 
     def __str__(self):
         return self.name
