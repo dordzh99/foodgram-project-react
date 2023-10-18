@@ -12,7 +12,7 @@ class CustomUser(AbstractUser):
 
     email = models.EmailField(
         unique=True,
-        max_length=LENGTH_EMAIL,
+        max_length=LENGTH_EMAIL
     )
 
     class Meta:
