@@ -119,7 +119,7 @@ class AddIngredientSerializer(serializers.ModelSerializer):
             ),
             MaxValueValidator(
                 limit_value=MAX_VALUE,
-                message= f'Количество ингредиента больше {MAX_VALUE}!'
+                message=f'Количество ингредиента больше {MAX_VALUE}!'
             )
         )
     )
@@ -190,8 +190,8 @@ class RecipeSerializer(serializers.ModelSerializer):
     def validate_image(self, value):
         if not value:
             raise serializers.ValidationError(
-                {'image': '!'}
-        )
+                {'image': 'Вставьте изображение!'}
+            )
         return value
 
     @staticmethod
