@@ -16,7 +16,7 @@ class CustomUserCreateSerializer(UserCreateSerializer):
 
     class Meta(UserCreateSerializer.Meta):
         model = User
-        fields = tuple.(User.REQUIRED_FIELDS) + (
+        fields = tuple(User.REQUIRED_FIELDS) + (
             User.USERNAME_FIELD, 'password'
         )
 
