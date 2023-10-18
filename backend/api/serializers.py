@@ -16,9 +16,9 @@ class CustomUserCreateSerializer(UserCreateSerializer):
 
     class Meta:
         model = User
-        fields = tuple(User.REQUIRED_FIELDS) + (
-            User.USERNAME_FIELD, 'password'
-        )
+        fields = ('email', 'username', 'first_name',
+                  'last_name', 'password')
+        required_fields = ('first_name', 'last_name')
 
 
 class ProfileSerializer(UserSerializer):
