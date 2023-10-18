@@ -101,12 +101,6 @@ class Recipe(models.Model):
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
 
-    def clean(self):
-        if not self.ingredients.exists() or not self.tags.exists():
-            raise ValidationError(
-                'Рецепт должен иметь минимум один ингредиент или один тег.'
-            )
-
     def __str__(self):
         return self.name
 
