@@ -1,12 +1,15 @@
 from django.contrib.auth import get_user_model
+from django.core.validators import MaxValueValidator, MinValueValidator
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
+from recipes.constant import MIN_VALUE, MAX_VALUE
 from recipes.models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
                             ShoppingCart, Tag, TagInRecipe)
 from users.models import Subscribe
+
 
 User = get_user_model()
 
@@ -108,7 +111,18 @@ class AddIngredientSerializer(serializers.ModelSerializer):
     """Сериализатор для добавления ингредиентов."""
 
     id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
-    amount = serializers.IntegerField(min_value=1)
+    amount = serializers.IntegerField(
+        validators=(
+            MinValueValidator(
+                limit_value=MIN_VALUE,
+                message=f'Количество ингредиента меньше {MIN_VALUE}!'
+            ),
+            MaxValueValidator(
+                limit_value=MAX_VALUE,
+                message= f'Количество ингредиента больше {MAX_VALUE}!'
+            )
+        )
+    )
 
     class Meta:
         model = IngredientInRecipe
@@ -120,11 +134,22 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     author = ProfileSerializer(read_only=True)
     image = Base64ImageField()
-    cooking_time = serializers.IntegerField(min_value=1)
     ingredients = AddIngredientSerializer(many=True)
     tags = serializers.PrimaryKeyRelatedField(
         queryset=Tag.objects.all(),
         many=True
+    )
+    cooking_time = serializers.IntegerField(
+        validators=(
+            MinValueValidator(
+                limit_value=MIN_VALUE,
+                message=f'Время приготовления меньше {MIN_VALUE} минуты!'
+            ),
+            MaxValueValidator(
+                limit_value=MAX_VALUE,
+                message=f'Время приготовления больше {MAX_VALUE} минут!'
+            )
+        )
     )
 
     class Meta:
@@ -135,6 +160,10 @@ class RecipeSerializer(serializers.ModelSerializer):
         )
 
     def validate_ingredients(self, ingredients):
+        if len(ingredients) < 1:
+            raise serializers.ValidationError(
+                {'ingredients': 'Нужно выбрать хотя бы один ингредиент!'}
+            )
         unique_ingredient_id = set()
         for ingredient in ingredients:
             ingredient_id = ingredient['id']
@@ -157,6 +186,13 @@ class RecipeSerializer(serializers.ModelSerializer):
             )
 
         return tags
+
+    def validate_image(self, value):
+        if not value:
+            raise serializers.ValidationError(
+                {'image': '!'}
+        )
+        return value
 
     @staticmethod
     def create_ingredients(ingredients, recipe):
