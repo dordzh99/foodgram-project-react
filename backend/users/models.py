@@ -1,11 +1,35 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from .constant import LENGTH_EMAIL, LENGTH_USER
+
 
 class CustomUser(AbstractUser):
     """Кастомная модель пользователя."""
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
-    is_subscribed = models.BooleanField(default=False)
+    email = models.EmailField(
+        verbose_name='Почта',
+        unique=True,
+        max_length=LENGTH_EMAIL,
+    )
+    first_name = models.CharField(
+        verbose_name='Имя',
+        max_length=LENGTH_USER,
+    )
+    last_name = models.CharField(
+        verbose_name='Фамилия',
+        max_length=LENGTH_USER,
+    )
+
+    class Meta:
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
+        ordering = ('username',)
+
+    def __str__(self):
+        return self.username
 
 
 class Subscribe(models.Model):

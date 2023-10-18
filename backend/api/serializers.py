@@ -18,7 +18,6 @@ class CustomUserCreateSerializer(UserCreateSerializer):
         model = User
         fields = ('email', 'username', 'first_name',
                   'last_name', 'password')
-        required_fields = ('first_name', 'last_name')
 
 
 class ProfileSerializer(UserSerializer):
