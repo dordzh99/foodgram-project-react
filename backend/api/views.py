@@ -136,6 +136,15 @@ class CustomUserViewSet(UserViewSet):
     pagination_class = CustomPagination
 
     @action(
+        detail=False,
+        permission_classes=(IsAuthenticated, ),
+        methods=['GET']
+    )
+    def me(self, request):
+        serializer = self.get_serializer(request.user)
+        return Response(serializer.data)
+
+    @action(
         detail=True,
         methods=['POST', 'DELETE'],
         permission_classes=(IsAuthenticated, )
