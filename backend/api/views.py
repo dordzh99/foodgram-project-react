@@ -161,10 +161,14 @@ class CustomUserViewSet(UserViewSet):
             serializer.is_valid(raise_exception=True)
             Subscribe.objects.create(user=user, author=author)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-        subscription = get_object_or_404(
-            Subscribe, user=user, author=author
-        )
+        subscription = Subscribe.objects.filter(
+            user=user, author=author
+        ).first()
+        if not subscription:
+            return Response(
+                {'error': 'Вы не подписаны на этого пользователя!'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         subscription.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
