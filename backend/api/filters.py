@@ -1,7 +1,7 @@
 from django_filters.rest_framework import (BooleanFilter, FilterSet,
                                            ModelChoiceFilter,
                                            ModelMultipleChoiceFilter, filters)
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import AuthenticationFailed
 
 from recipes.models import Ingredient, Recipe, Tag, User
 
@@ -42,7 +42,7 @@ class RecipeFilter(FilterSet):
         if value and user.is_authenticated:
             return queryset.filter(favorites__user=user)
         if value and not user.is_authenticated:
-            raise PermissionDenied('Необходимо авторизоваться!')
+            raise AuthenticationFailed('Необходимо авторизоваться!')
         return queryset
 
     def get_is_in_shopping_cart(self, queryset, name, value):
@@ -50,5 +50,11 @@ class RecipeFilter(FilterSet):
         if value and user.is_authenticated:
             return queryset.filter(shopping_cart__user=user)
         if value and not user.is_authenticated:
-            raise PermissionDenied('Необходимо авторизоваться!')
+            raise AuthenticationFailed('Необходимо авторизоваться!')
         return queryset
+
+    def filter_queryset(self, queryset):
+        filtered_queryset = super().filter_queryset(queryset)
+        if not filtered_queryset:
+            return queryset
+        return filtered_queryset
