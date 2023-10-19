@@ -11,7 +11,7 @@ class IngredientsInLine(admin.TabularInline):
     model = Recipe.ingredients.through
 
 
-class TagsInLine(admin.TabularInLine):
+class TagsInLine(admin.TabularInline):
     model = Recipe.tags.through
 
 
