@@ -1,16 +1,19 @@
 from django.contrib import admin
 from django.contrib.admin import display
 
+from .form import AtLeastOneRequiredInlineFormSet
 from .models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
                      ShoppingCart, Tag, TagInRecipe)
 
 
 class IngredientsInLine(admin.TabularInline):
     model = Recipe.ingredients.through
+    formset = AtLeastOneRequiredInlineFormSet
 
 
 class TagsInLine(admin.TabularInline):
     model = Recipe.tags.through
+    formset = AtLeastOneRequiredInlineFormSet
 
 
 @admin.register(Ingredient)
