@@ -1,7 +1,7 @@
 from django_filters.rest_framework import (BooleanFilter, FilterSet,
                                            ModelChoiceFilter,
                                            ModelMultipleChoiceFilter, filters)
-from rest_framework.exceptions import AuthenticationFailed, ValidationError
+from rest_framework.exceptions import AuthenticationFailed
 
 from recipes.models import Ingredient, Recipe, Tag, User
 
@@ -54,13 +54,13 @@ class RecipeFilter(FilterSet):
         return queryset
 
     def filter_queryset(self, queryset):
-        try:
-            queryset = super().filter_queryset(queryset)
-            if not queryset.exists():
-                queryset = self.get_base_queryset()
-            return queryset
-        except ValidationError:
-            return self.get_base_queryset()
+        tags = self.request.GET.getlist('tags')
+        if tags:
+            if not Tag.objects.filter(slug__in=tags).exists():
+                return queryset
+            filtered_queryset = super().filter_queryset(queryset)
+            if not filtered_queryset:
+                return queryset
+            return filtered_queryset
 
-    def get_base_queryset(self):
-        return self.queryset
+        return queryset
