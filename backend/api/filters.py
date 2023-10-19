@@ -55,7 +55,13 @@ class RecipeFilter(FilterSet):
 
     def filter_queryset(self, queryset):
         try:
-            super().filter_queryset(queryset)
+            queryset = super().filter_queryset(queryset)
+            if not queryset.exists():
+                queryset = self.get_base_queryset()
         except APIException as e:
             if e.status_code == 400:
-                return queryset
+                self.get_base_queryset()
+        return queryset
+
+    def get_base_queryset(self):
+        return self.queryset
