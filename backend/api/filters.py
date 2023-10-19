@@ -1,6 +1,7 @@
 from django_filters.rest_framework import (BooleanFilter, FilterSet,
                                            ModelChoiceFilter,
                                            ModelMultipleChoiceFilter, filters)
+from rest_framework import status
 from rest_framework.exceptions import APIException, AuthenticationFailed
 
 from recipes.models import Ingredient, Recipe, Tag, User
@@ -60,8 +61,9 @@ class RecipeFilter(FilterSet):
                 queryset = self.get_base_queryset()
             return queryset
         except APIException as e:
-            if e.status_code == 400:
+            if e.status_code == status.HTTP_400_BAD_REQUEST:
                 return self.get_base_queryset()
 
     def get_base_queryset(self):
         return self.queryset
+
