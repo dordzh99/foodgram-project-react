@@ -148,6 +148,9 @@ class TagInRecipe(models.Model):
             ),
         )
 
+    def __str__(self):
+        return self.tag.name
+
 
 class Favorite(models.Model):
     """Модель для отображения избранного."""
