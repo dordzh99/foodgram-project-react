@@ -64,4 +64,4 @@ class RecipeFilter(FilterSet):
                 return queryset
             return filtered_queryset
         else:
-            return Recipe.objects.all()
+            return queryset
