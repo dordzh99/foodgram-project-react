@@ -55,12 +55,13 @@ class RecipeFilter(FilterSet):
 
     def filter_queryset(self, queryset):
         tags = self.request.GET.getlist('tags')
-        if tags:
-            if Tag.objects.filter(slug__in=tags).count() == 0:
-                return queryset
-            filtered_queryset = super().filter_queryset(queryset)
+        if not tags:
+            return queryset
+        existing_tags = Tag.objects.filter(slug__in=tags)
+        if existing_tags:
+            filtered_queryset = queryset.filter(tags__in=existing_tags)
             if not filtered_queryset:
                 return queryset
             return filtered_queryset
-
-        return queryset
+        else:
+            return queryset
