@@ -97,6 +97,12 @@ class Recipe(models.Model):
         related_name='recipes'
     )
 
+    def clean(self):
+        if not self.ingredients.exists() or not self.tags.exists():
+            raise ValidationError(
+                'Рецепт должен иметь минимум один ингредиент или один тег.'
+            )
+
     class Meta:
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
@@ -147,6 +153,9 @@ class TagInRecipe(models.Model):
                 name='unique_tag_in_recipe'
             ),
         )
+
+    def __str__(self):
+        return self.tag
 
 
 class Favorite(models.Model):
