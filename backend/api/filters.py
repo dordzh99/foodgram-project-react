@@ -1,7 +1,6 @@
 from django_filters.rest_framework import (BooleanFilter, FilterSet,
                                            ModelChoiceFilter,
                                            ModelMultipleChoiceFilter, filters)
-from rest_framework import status
 from rest_framework.exceptions import AuthenticationFailed, ValidationError
 
 from recipes.models import Ingredient, Recipe, Tag, User
