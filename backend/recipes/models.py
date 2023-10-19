@@ -99,6 +99,8 @@ class Recipe(models.Model):
 
     def clean(self):
         if not self.ingredients.exists() or not self.tags.exists():
+            print(self.ingredients.exists())
+            print(self.tags.exists())
             raise ValidationError(
                 'Рецепт должен иметь минимум один ингредиент или один тег.'
             )
