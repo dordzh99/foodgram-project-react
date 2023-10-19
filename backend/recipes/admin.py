@@ -44,11 +44,12 @@ class RecipeAdmin(admin.ModelAdmin):
 
 
 @admin.register(IngredientInRecipe)
-class IngredientInRecipe(admin.ModelAdmin):
+class IngredientInRecipeAdmin(admin.ModelAdmin):
     list_display = ('id', 'recipe', 'ingredient', 'amount',)
 
 
-class TagInRecipe(admin.ModelAdmin):
+@admin.register(TagInRecipe)
+class TagInRecipeAdmin(admin.ModelAdmin):
     list_display = ('id', 'recipe', 'tag')
 
 
