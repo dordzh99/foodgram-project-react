@@ -97,14 +97,6 @@ class Recipe(models.Model):
         related_name='recipes'
     )
 
-    def clean(self):
-        if not self.ingredients.exists() or not self.tags.exists():
-            print(self.ingredients.exists())
-            print(self.tags.exists())
-            raise ValidationError(
-                'Рецепт должен иметь минимум один ингредиент или один тег.'
-            )
-
     class Meta:
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
