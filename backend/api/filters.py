@@ -66,4 +66,3 @@ class RecipeFilter(FilterSet):
 
     def get_base_queryset(self):
         return self.queryset
-
