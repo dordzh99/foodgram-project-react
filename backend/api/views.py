@@ -145,7 +145,6 @@ class CustomUserViewSet(UserViewSet):
     queryset = User.objects.all()
     serializer_class = ProfileSerializer
     pagination_class = CustomPagination
-    permission_classes = (CurrentUserOrAdmin, )
 
     @action(
         detail=False,
