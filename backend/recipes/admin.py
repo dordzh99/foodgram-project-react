@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.admin import display
 from django.core.exceptions import ValidationError
+from django.db import transaction
 
 from .models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
                      ShoppingCart, Tag)
@@ -8,6 +9,10 @@ from .models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
 
 class IngredientsInLine(admin.TabularInline):
     model = Recipe.ingredients.through
+
+
+class TagsInLine(admin.TabularInLine):
+    model = Recipe.tags.through
 
 
 @admin.register(Ingredient)
@@ -30,18 +35,20 @@ class RecipeAdmin(admin.ModelAdmin):
                     'count_favorites')
     list_display_links = ('name',)
     list_filter = ('author', 'name', 'tags',)
-    inlines = (IngredientsInLine,)
+    inlines = (IngredientsInLine, TagsInLine)
+
 
     @display(description='Количество в избранных')
     def count_favorites(self, obj):
         return obj.favorites.count()
 
+    @transaction.atomic
     def save_model(self, request, obj, form, change):
         if not obj.ingredients.exists() or not obj.tags.exists():
             raise ValidationError(
                 'Рецепт должен иметь минимум один ингредиент или один тег.'
             )
-        obj.save()
+        super().save_model(request, obj, form, change)
 
 
 @admin.register(IngredientInRecipe)
